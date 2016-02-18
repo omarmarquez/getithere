@@ -25,7 +25,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/login/$', auth_views.login),
-    url(r'^/', include('store.urls', namespace="store")),
+    # url(r'^login/$', login, name='login'),
+    url('^', include('django.contrib.auth.urls'), {'template_name': 'base.html'}),
+    url(r'^', include('store.urls', namespace="store")),
     url(r'^store/', include('store.urls', namespace="store")),
 ]
 urlpatterns += staticfiles_urlpatterns()
