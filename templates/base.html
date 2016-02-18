@@ -1,0 +1,136 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src='{% static "js/jquery.js" %}'></script>
+
+    <title>{% block page_title %}{{ _("My Site") }}{% endblock %}</title>
+
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block meta %}{% endblock %} <!-- meta -->
+
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+    {% block css %}
+        <style>
+            body {
+                padding-top: 60px;
+                padding-bottom: 10px;
+            }
+        </style>
+    {% endblock %} <!-- css -->
+
+
+    {% block head %}{% endblock %} <!-- head -->
+</head>
+
+<body class="{% block body-class %}{% endblock %}" {% block body_attributes %}{% endblock %}>
+{% block body %}
+    <header>
+        {% block header %}{% endblock %}
+    </header>
+
+    <!--<div role="main">-->
+
+    <div class="navbar navbar-fixed-top navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="active">
+                        <a class="navbar-brand" href="{% url 'store:index' %}">GetItHere<span class="sr-only">(current)</span></a>
+                    </div>
+                </div> <!-- navbar-header -->
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        {% if server %}
+                            <li><a href="{{ server.url }}/admin">Admin</a></li>
+                        {% endif %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href={% url 'store:index' %}>Host Reconciliation Report</a></li>
+                                <li role="separator" class="divider"></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    {% if user.is_authenticated %}
+                         <form class="navbar-form navbar-right" method="post" action="{% url 'django.contrib.auth.views.logout' %}">
+                             {% csrf_token %}
+                              <button type="submit" class="btn btn-info">
+                                  <span class="glyphicon glyphicon-log-out"></span>
+                              </button>
+                        </form>
+                        <p class="navbar-text navbar-right">Welcome {{ api_user.first_name }}</p>
+                    {% else %}
+                        <form class="navbar-form navbar-right" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}" />
+                            <div class="form-group">
+                                <input type="text" placeholder={{ user }} class="form-control" name="username">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" placeholder="Password" class="form-control" name="password">
+                            </div>
+                            <button type="submit" class="btn btn-info">Sign in</button>
+                        </form>
+                    {% endif %}
+                </div> <!-- navbar-collapse -->
+            </div> <!-- container -->
+        </div> <!-- navbar-inner -->
+    </div> <!-- navbar -->
+
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
+    {% block messages %}
+        {% if messages %}
+            <div class="container-fluid">
+                {% for message in messages %}
+                    <div {% if message.tags %} class="alert"{% endif %}
+                         role="alert">{{ message }}</div>
+                {% endfor %}
+            </div> <!-- container -->
+        {% endif %}
+    {% endblock %} <!-- messages -->
+
+    {% block breadcrumb %}
+        {% if bread_crumbs %}
+            <div class="container-fluid">
+                <ul class="breadcrumb">
+                    {% for bc in bread_crumbs %}
+                        {% if forloop.last %}
+                            <li class="active">{{ bc.display }}</li>
+                        {% else %}
+                            <li><a href="{% url bc.view %}">{{ bc.display }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div> <!-- container -->
+        {% endif %}
+    {% endblock %} <!-- breadcrumb -->
+
+    {% block content %}
+    {% endblock %} <!-- content -->
+
+    <footer>
+        {% block footer %}
+            <div class="container-fluid">
+                <hr>
+                <p>&copy; by no one 2016</p>
+            </div>
+        {% endblock %} <!-- footer -->
+    </footer>
+{% endblock %} <!-- body -->
+</body>
+</html>
